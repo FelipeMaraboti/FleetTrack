@@ -301,8 +301,8 @@ void main() {
 
   // Operador de acesso seguro ?. e coalescência nula ??
   final Veiculo? veiculoConsultado = frotaService.buscarPorId('VEI-001');
-  final idRotaSegura = veiculoConsultado.rotaAtualId ?? 'Nenhuma rota vinculada';
-  print('   3. Operadores ?. e ??: Veículo ${veiculoConsultado.id} -> $idRotaSegura\n');
+  final idRotaSegura = veiculoConsultado?.rotaAtualId ?? 'Nenhuma rota vinculada';
+  print('   3. Operadores ?. e ??: Veículo ${veiculoConsultado?.id} -> $idRotaSegura\n');
 
   // =========================================================================
   // 27. RELATÓRIO FINAL CONSOLIDADO DA FROTA
