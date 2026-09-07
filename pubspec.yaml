@@ -1,0 +1,11 @@
+name: fleet_track
+description: FleetTrack - Sistema de Gestão de Frota e Telemetria Veicular (Mobilidade Urbana).
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dev_dependencies:
+  test: ^1.24.0
+  lints: ^3.0.0

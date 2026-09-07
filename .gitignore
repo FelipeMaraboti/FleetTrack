@@ -1,0 +1,24 @@
+# Arquivos e diretórios gerados pelo Dart e Flutter
+.dart_tool/
+.packages
+build/
+.pub-cache/
+.pub/
+
+# Configurações de IDEs
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Logs e arquivos temporários
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db
