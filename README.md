@@ -13,11 +13,10 @@
 * **Prazo de Entrega:** Até 10/09/2026
 
 ### Integrantes da Equipe (Máximo 5 pessoas):
-1. **[Nome do Integrante 1]** - Matrícula: `[0000000]`
-2. **[Nome do Integrante 2]** - Matrícula: `[0000000]`
-3. **[Nome do Integrante 3]** - Matrícula: `[0000000]`
-4. **[Nome do Integrante 4]** - Matrícula: `[0000000]`
-5. **[Nome do Integrante 5]** - Matrícula: `[0000000]`
+1. **Enock de Oliveira Memelli Junio**
+2. **Felipe Sabino Maraboti**
+3. **Pedro José Muchelin Acha**
+4. **Samuel Mota Moysés**
 
 ---
 
@@ -88,8 +87,6 @@ fleet_track/
 │   └── fleet_track_test.dart    # Suíte de testes unitários automatizados
 │
 ├── ENVIRONMENT_REPORT.md        # Relatório de ambiente e ferramentas
-├── CHECKLIST_AP1B.md            # Mapeamento detalhado dos 43 requisitos
-├── ARGUICAO.md                  # Guia de estudo para defesa oral (10 min)
 ├── .gitignore                   # Regras de exclusão para Git
 └── pubspec.yaml                 # Manifesto do projeto Dart
 ```
@@ -142,11 +139,9 @@ dart test
 
 ## 8. Declaração de Uso de Inteligência Artificial
 
-Em conformidade com as diretrizes acadêmicas de integridade e transparência:
+Ferramentas de Inteligência Artificial Generativa foram utilizadas como recurso de apoio durante o desenvolvimento do projeto, principalmente em atividades de brainstorming, organização de documentos e sugestão de casos de teste.
 
-* Ferramentas de Inteligência Artificial Generativa foram utilizadas estritamente como **instrumento de apoio técnico**, auxiliando nas etapas de brainstorming de domínio, estruturação inicial de arquivos, formatação de documentação e sugestão de casos de teste.
-* A autoria intelectual, a compreensão arquitetural e as tomadas de decisão foram realizadas e validadas pelos estudantes.
-* Todo o código foi revisado linha a linha e a equipe possui total domínio técnico para explicar e defender as decisões de implementação durante a arguição oral.
+As decisões relacionadas à arquitetura, implementação e funcionamento do sistema foram realizadas e validadas pelos estudantes. Todo o conteúdo gerado com auxílio de IA foi revisado pela equipe, que possui domínio sobre as soluções e decisões adotadas no projeto.
 
 ---
 
