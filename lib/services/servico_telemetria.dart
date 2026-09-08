@@ -35,7 +35,8 @@ class ServicoTelemetria with LogAuditoriaMixin {
     }
 
     if (leitura.bateria < 20.0) {
-      print('   [ALERTA] ${veiculo.id} está com bateria baixa (${leitura.bateria.toStringAsFixed(1)}%).');
+      print(
+          '   [ALERTA] ${veiculo.id} está com bateria baixa (${leitura.bateria.toStringAsFixed(1)}%).');
     }
   }
 

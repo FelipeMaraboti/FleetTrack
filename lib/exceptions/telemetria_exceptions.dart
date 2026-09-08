@@ -10,7 +10,10 @@ class RecursoCriticoException implements Exception {
 
   @override
   String toString() {
-    final detalhe = nivelBateria != null ? ' (Nível: ${nivelBateria!.toStringAsFixed(1)}%)' : '';
+    final bateria = nivelBateria;
+    final detalhe = bateria != null
+        ? ' (Nível: ${bateria.toStringAsFixed(1)}%)'
+        : '';
     return 'RecursoCriticoException: $mensagem$detalhe';
   }
 }

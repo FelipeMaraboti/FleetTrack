@@ -191,16 +191,20 @@ void _opcaoCadastrarVeiculos(GerenciadorFrota frotaService) {
   final v4 = frotaService.buscarPorId('VEI-004');
 
   print('[OK] ${v1.id} - ${v1.modelo} (Construtor Gerativo Padrão)');
-  print('     ↳ Bateria: ${v1.nivelBateria.toStringAsFixed(1)}% | Tração: Elétrica');
+  print(
+      '     ↳ Bateria: ${v1.nivelBateria.toStringAsFixed(1)}% | Tração: Elétrica');
 
   print('[OK] ${v2.id} - ${v2.modelo} (Construtor Gerativo)');
-  print('     ↳ Bateria: ${v2.nivelBateria.toStringAsFixed(1)}% | Tanque: ${(v2 as CarroCombustao).nivelCombustivelLitros}L');
+  print(
+      '     ↳ Bateria: ${v2.nivelBateria.toStringAsFixed(1)}% | Tanque: ${(v2 as CarroCombustao).nivelCombustivelLitros}L');
 
   print('[OK] ${v3.id} - ${v3.modelo} (Construtor Nomeado .economico)');
-  print('     ↳ Bateria: ${v3.nivelBateria.toStringAsFixed(1)}% | Autonomia otimizada');
+  print(
+      '     ↳ Bateria: ${v3.nivelBateria.toStringAsFixed(1)}% | Autonomia otimizada');
 
   print('[OK] ${v4.id} - ${v4.modelo} (Construtor Factory .fromMap)');
-  print('     ↳ Bateria: ${v4.nivelBateria.toStringAsFixed(1)}% | Criado a partir de Map com validações');
+  print(
+      '     ↳ Bateria: ${v4.nivelBateria.toStringAsFixed(1)}% | Criado a partir de Map com validações');
 
   print('\nTotal de veículos ativos no sistema: ${frotaService.totalVeiculos}');
 }
@@ -213,12 +217,14 @@ void _opcaoCadastrarRotas(GerenciadorRotas rotasService) {
 
   for (final rota in rotasService.obterTodas()) {
     print('[OK] ${rota.id} - ${rota.origem} ➔ ${rota.destino}');
-    print('     ↳ Distância: ${rota.distanciaKm} km | Tempo Estimado: ${rota.tempoEstimadoMinutos} min');
+    print(
+        '     ↳ Distância: ${rota.distanciaKm} km | Tempo Estimado: ${rota.tempoEstimadoMinutos} min');
   }
 
   print('\n📍 Pontos únicos atendidos na malha viária (Set):');
   print('   ${rotasService.obterPontosAtendidos()}');
-  print('\nDistância total da malha: ${rotasService.calcularDistanciaTotalAtiva()} km');
+  print(
+      '\nDistância total da malha: ${rotasService.calcularDistanciaTotalAtiva()} km');
 }
 
 // =========================================================================
@@ -264,17 +270,20 @@ void _opcaoProcessarTelemetria(
   print('Processando telemetria ${v1.id}:');
   telemetriaService.processarLeitura(leitura1, v1);
   print('   GPS: (${leitura1.latitude}, ${leitura1.longitude})');
-  print('   Velocidade: ${v1.velocidadeAtual.toStringAsFixed(0)} km/h | Bateria: ${v1.nivelBateria.toStringAsFixed(1)}% | Status: ONLINE\n');
+  print(
+      '   Velocidade: ${v1.velocidadeAtual.toStringAsFixed(0)} km/h | Bateria: ${v1.nivelBateria.toStringAsFixed(1)}% | Status: ONLINE\n');
 
   print('Processando telemetria ${v2.id}:');
   telemetriaService.processarLeitura(leitura2, v2);
   print('   GPS: (${leitura2.latitude}, ${leitura2.longitude})');
-  print('   Velocidade: ${v2.velocidadeAtual.toStringAsFixed(0)} km/h | Bateria: ${v2.nivelBateria.toStringAsFixed(1)}% | Status: ONLINE\n');
+  print(
+      '   Velocidade: ${v2.velocidadeAtual.toStringAsFixed(0)} km/h | Bateria: ${v2.nivelBateria.toStringAsFixed(1)}% | Status: ONLINE\n');
 
   print('Processando telemetria ${v4.id}:');
   telemetriaService.processarLeitura(leitura4, v4);
   print('   GPS: (${leitura4.latitude}, ${leitura4.longitude})');
-  print('   Velocidade: ${v4.velocidadeAtual.toStringAsFixed(0)} km/h | Bateria: ${v4.nivelBateria.toStringAsFixed(1)}% | Status: ONLINE');
+  print(
+      '   Velocidade: ${v4.velocidadeAtual.toStringAsFixed(0)} km/h | Bateria: ${v4.nivelBateria.toStringAsFixed(1)}% | Status: ONLINE');
 }
 
 // =========================================================================
@@ -294,11 +303,14 @@ void _opcaoMetodosFuncionais(
   }
 
   // .where()
-  print('\n-- [15] Demonstração de .where() (Filtros de conectados e bateria baixa):');
+  print(
+      '\n-- [15] Demonstração de .where() (Filtros de conectados e bateria baixa):');
   final conectados = frotaService.obterVeiculosConectados();
   final bateriaBaixa = frotaService.obterVeiculosComBateriaBaixa(limite: 20.0);
-  print('   Veículos conectados (${conectados.length}): ${conectados.map((v) => v.id).toList()}');
-  print('   Veículos com bateria < 20% (${bateriaBaixa.length}): ${bateriaBaixa.map((v) => "${v.id} (${v.nivelBateria.toStringAsFixed(1)}%)").toList()}');
+  print(
+      '   Veículos conectados (${conectados.length}): ${conectados.map((v) => v.id).toList()}');
+  print(
+      '   Veículos com bateria < 20% (${bateriaBaixa.length}): ${bateriaBaixa.map((v) => "${v.id} (${v.nivelBateria.toStringAsFixed(1)}%)").toList()}');
 
   // .fold()
   print('\n-- [16] Demonstração de .fold() (Cálculo acumulado):');
@@ -306,8 +318,10 @@ void _opcaoMetodosFuncionais(
   final mediaVelocidade = frotaService.calcularVelocidadeMedia();
   final totalDistanciaRotas = rotasService.calcularDistanciaTotalAtiva();
   print('   Média de Bateria da Frota: ${mediaBateria.toStringAsFixed(1)}%');
-  print('   Velocidade Média da Frota em Operação: ${mediaVelocidade.toStringAsFixed(1)} km/h');
-  print('   Extensão Total das Rotas Ativas: ${totalDistanciaRotas.toStringAsFixed(1)} km');
+  print(
+      '   Velocidade Média da Frota em Operação: ${mediaVelocidade.toStringAsFixed(1)} km/h');
+  print(
+      '   Extensão Total das Rotas Ativas: ${totalDistanciaRotas.toStringAsFixed(1)} km');
 
   // .any()
   print('\n-- [17] Demonstração de .any():');
@@ -316,8 +330,10 @@ void _opcaoMetodosFuncionais(
 
   // .every()
   print('\n-- [18] Demonstração de .every():');
-  final todosOperacionais = frotaService.todosAptosParaOperacao(limiteMinimo: 20.0);
-  print('   Todos os veículos estão 100% aptos para operação (online e bateria >= 20%)? $todosOperacionais');
+  final todosOperacionais =
+      frotaService.todosAptosParaOperacao(limiteMinimo: 20.0);
+  print(
+      '   Todos os veículos estão 100% aptos para operação (online e bateria >= 20%)? $todosOperacionais');
 }
 
 // =========================================================================
@@ -328,7 +344,8 @@ void _opcaoColecoesAvancadas(GerenciadorFrota frotaService) {
 
   // Spread Operator (...)
   final frotaCopia = [...frotaService.obterTodos()];
-  print('Spread Operator (...): Lista de ${frotaCopia.length} veículos clonada com sucesso.\n');
+  print(
+      'Spread Operator (...): Lista de ${frotaCopia.length} veículos clonada com sucesso.\n');
 
   // Collection-For, Collection-If e Null-Aware Spread (...?)
   print('Relatório gerado dinamicamente no painel:');
@@ -368,7 +385,8 @@ void _opcaoExcecoesAuditoria(
   telemetriaService.processarLeitura(leituraDesconectado, v3);
 
   // Bateria Crítica com try/on/catch/finally e rethrow
-  print('\n-- [22/23] Simulação: Bateria Crítica (<= 5%) com try-on-catch-finally e rethrow');
+  print(
+      '\n-- [22/23] Simulação: Bateria Crítica (<= 5%) com try-on-catch-finally e rethrow');
   final leituraCritica = LeituraTelemetria(
     veiculoId: 'VEI-003',
     latitude: -20.6950,
@@ -384,17 +402,20 @@ void _opcaoExcecoesAuditoria(
   } on RecursoCriticoException catch (e) {
     print('   [TRATAMENTO NA CLI - on RecursoCriticoException]');
     print('   Exceção interceptada no ponto de entrada: $e');
-    print('   Ação tomada: Acionando guincho e notificando central de operações!');
+    print(
+        '   Ação tomada: Acionando guincho e notificando central de operações!');
   } on DadosTelemetriaInvalidosException catch (e) {
     print('   [TRATAMENTO NA CLI - on DadosTelemetriaInvalidosException]: $e');
   } catch (e, stackTrace) {
     print('   [TRATAMENTO GENÉRICO]: $e\n$stackTrace');
   } finally {
-    print('   [BLOCO FINALLY DA CLI]: Ciclo de contenção de emergência concluído com segurança.\n');
+    print(
+        '   [BLOCO FINALLY DA CLI]: Ciclo de contenção de emergência concluído com segurança.\n');
   }
 
   // Validação de dados inválidos
-  print('-- [26] Demonstração: Validação de Dados Inválidos (DadosTelemetriaInvalidosException)');
+  print(
+      '-- [26] Demonstração: Validação de Dados Inválidos (DadosTelemetriaInvalidosException)');
   try {
     print('Tentando criar leitura com latitude impossível (150.0°)...');
     LeituraTelemetria(
@@ -425,12 +446,16 @@ void _opcaoSoundNullSafety(GerenciadorFrota frotaService) {
 
   // 3. Operadores ?. e ??
   final Veiculo? veiculoConsultado = frotaService.buscarPorIdOuNull('VEI-001');
-  final idRotaSegura = veiculoConsultado?.rotaAtualId ?? 'Nenhuma rota vinculada';
-  print('3. Operadores ?. e ??: Veículo ${veiculoConsultado?.id} -> $idRotaSegura');
+  final idRotaSegura =
+      veiculoConsultado?.rotaAtualId ?? 'Nenhuma rota vinculada';
+  print(
+      '3. Operadores ?. e ??: Veículo ${veiculoConsultado?.id} -> $idRotaSegura');
 
   final Veiculo? veiculoInexistente = frotaService.buscarPorIdOuNull('VEI-999');
-  final rotaInexistente = veiculoInexistente?.rotaAtualId ?? 'Veículo não encontrado (Fallback seguro)';
-  print('4. Acesso seguro a veículo nulo (?.) com fallback (??): $rotaInexistente');
+  final rotaInexistente = veiculoInexistente?.rotaAtualId ??
+      'Veículo não encontrado (Fallback seguro)';
+  print(
+      '4. Acesso seguro a veículo nulo (?.) com fallback (??): $rotaInexistente');
 }
 
 // =========================================================================
@@ -444,11 +469,15 @@ void _opcaoRelatorioConsolidado(
   print('        RELATÓRIO CONSOLIDADO DA FROTA  ');
   print('========================================');
   print('Total de Veículos Cadastrados: ${frotaService.totalVeiculos}');
-  print('Total de Veículos Conectados:   ${frotaService.obterVeiculosConectados().length}');
+  print(
+      'Total de Veículos Conectados:   ${frotaService.obterVeiculosConectados().length}');
   print('Total de Rotas Cadastradas:     ${rotasService.totalRotas}');
-  print('Bateria Média da Frota:         ${frotaService.calcularMediaBateria().toStringAsFixed(1)}%');
-  print('Velocidade Média em Trânsito:   ${frotaService.calcularVelocidadeMedia().toStringAsFixed(1)} km/h');
-  print('Veículos em Estado Crítico:     ${frotaService.existeVeiculoCritico() ? "SIM (Atenção imediata)" : "NÃO (Frota estável)"}');
+  print(
+      'Bateria Média da Frota:         ${frotaService.calcularMediaBateria().toStringAsFixed(1)}%');
+  print(
+      'Velocidade Média em Trânsito:   ${frotaService.calcularVelocidadeMedia().toStringAsFixed(1)} km/h');
+  print(
+      'Veículos em Estado Crítico:     ${frotaService.existeVeiculoCritico() ? "SIM (Atenção imediata)" : "NÃO (Frota estável)"}');
   print('========================================');
 }
 

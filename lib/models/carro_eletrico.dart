@@ -17,8 +17,8 @@ class CarroEletrico extends Veiculo {
     super.ultimaAtualizacao,
     this.capacidadeBateriaKwh = 60.0,
     double? autonomiaInicialKm,
-  }) : autonomiaRestanteKm =
-           autonomiaInicialKm ?? (capacidadeBateriaKwh * 6.5 * (nivelBateria / 100));
+  }) : autonomiaRestanteKm = autonomiaInicialKm ??
+            (capacidadeBateriaKwh * 6.5 * (nivelBateria / 100));
 
   /// Construtor nomeado para configuração de veículo em Modo Econômico.
   /// Define capacidade padrão otimizada e parametrização para baixo consumo urbano.
@@ -26,15 +26,15 @@ class CarroEletrico extends Veiculo {
     required String id,
     required String modelo,
     double nivelBateria = 100.0,
-  }) : capacidadeBateriaKwh = 45.0,
-       autonomiaRestanteKm = 45.0 * 7.0 * (nivelBateria / 100),
-       super(
-         id: id,
-         modelo: '$modelo [ECO]',
-         nivelBateria: nivelBateria,
-         conectado: true,
-         velocidadeAtual: 0.0,
-       );
+  })  : capacidadeBateriaKwh = 45.0,
+        autonomiaRestanteKm = 45.0 * 7.0 * (nivelBateria / 100),
+        super(
+          id: id,
+          modelo: '$modelo [ECO]',
+          nivelBateria: nivelBateria,
+          conectado: true,
+          velocidadeAtual: 0.0,
+        );
 
   /// Construtor factory para instanciação segura a partir de Map (ex: JSON/API).
   /// Aplica Sound Null Safety sem operadores forçados (!), validando entradas.
@@ -88,7 +88,8 @@ class CarroEletrico extends Veiculo {
   void processarCargaTrabalho(double intensidade) {
     if (intensidade <= 0) return;
 
-    final consumoPercentual = (intensidade * 12.0) / (capacidadeBateriaKwh / 50.0);
+    final consumoPercentual =
+        (intensidade * 12.0) / (capacidadeBateriaKwh / 50.0);
     final novoNivel = (nivelBateria - consumoPercentual).clamp(0.0, 100.0);
 
     nivelBateria = novoNivel;

@@ -21,7 +21,9 @@ void main() {
       expect(carro.nivelBateria, equals(75.0));
     });
 
-    test('Deve lançar DadosTelemetriaInvalidosException para bateria menor que 0 ou maior que 100', () {
+    test(
+        'Deve lançar DadosTelemetriaInvalidosException para bateria menor que 0 ou maior que 100',
+        () {
       final carro = CarroEletrico(
         id: 'TEST-02',
         modelo: 'Test Car',
@@ -41,7 +43,9 @@ void main() {
   });
 
   group('2. Construtores Factory e Nomeado', () {
-    test('CarroEletrico.fromMap deve instanciar corretamente a partir de um Map', () {
+    test(
+        'CarroEletrico.fromMap deve instanciar corretamente a partir de um Map',
+        () {
       final mapa = {
         'id': 'EV-99',
         'modelo': 'Tesla Model 3',
@@ -58,13 +62,17 @@ void main() {
       expect(carro.conectado, isTrue);
     });
 
-    test('CarroEletrico.economico deve criar veículo com configuração otimizada', () {
+    test(
+        'CarroEletrico.economico deve criar veículo com configuração otimizada',
+        () {
       final carro = CarroEletrico.economico(id: 'ECO-01', modelo: 'Leaf');
       expect(carro.capacidadeBateriaKwh, equals(45.0));
       expect(carro.modelo, contains('[ECO]'));
     });
 
-    test('CarroEletrico.fromMap deve lançar exceção se campos obrigatórios faltarem', () {
+    test(
+        'CarroEletrico.fromMap deve lançar exceção se campos obrigatórios faltarem',
+        () {
       final mapaInvalido = {'bateria': 50.0};
       expect(
         () => CarroEletrico.fromMap(mapaInvalido),
@@ -74,9 +82,12 @@ void main() {
   });
 
   group('3. Regras Críticas de Telemetria e Exceções', () {
-    test('ServicoTelemetria deve lançar RecursoCriticoException para bateria <= 5%', () {
+    test(
+        'ServicoTelemetria deve lançar RecursoCriticoException para bateria <= 5%',
+        () {
       final servico = ServicoTelemetria();
-      final carro = CarroEletrico(id: 'EV-01', modelo: 'Zoe', nivelBateria: 50.0);
+      final carro =
+          CarroEletrico(id: 'EV-01', modelo: 'Zoe', nivelBateria: 50.0);
 
       final leituraCritica = LeituraTelemetria(
         veiculoId: 'EV-01',
@@ -121,8 +132,18 @@ void main() {
   group('4. Métodos Funcionais e Cálculos da Frota', () {
     test('calcularMediaBateria e calcularVelocidadeMedia com fold()', () {
       final frota = GerenciadorFrota();
-      final v1 = CarroEletrico(id: 'V1', modelo: 'Carro 1', nivelBateria: 80.0, velocidadeAtual: 40.0, conectado: true);
-      final v2 = CarroCombustao(id: 'V2', modelo: 'Carro 2', nivelBateria: 40.0, velocidadeAtual: 60.0, conectado: true);
+      final v1 = CarroEletrico(
+          id: 'V1',
+          modelo: 'Carro 1',
+          nivelBateria: 80.0,
+          velocidadeAtual: 40.0,
+          conectado: true);
+      final v2 = CarroCombustao(
+          id: 'V2',
+          modelo: 'Carro 2',
+          nivelBateria: 40.0,
+          velocidadeAtual: 60.0,
+          conectado: true);
 
       frota.cadastrar(v1);
       frota.cadastrar(v2);
@@ -133,22 +154,35 @@ void main() {
 
     test('where, any e every no gerenciamento de frota', () {
       final frota = GerenciadorFrota();
-      final v1 = CarroEletrico(id: 'V1', modelo: 'Carro 1', nivelBateria: 90.0, conectado: true);
-      final v2 = CarroCombustao(id: 'V2', modelo: 'Carro 2', nivelBateria: 15.0, conectado: true);
+      final v1 = CarroEletrico(
+          id: 'V1', modelo: 'Carro 1', nivelBateria: 90.0, conectado: true);
+      final v2 = CarroCombustao(
+          id: 'V2', modelo: 'Carro 2', nivelBateria: 15.0, conectado: true);
 
       frota.cadastrar(v1);
       frota.cadastrar(v2);
 
-      expect(frota.obterVeiculosComBateriaBaixa(limite: 20.0).length, equals(1));
+      expect(
+          frota.obterVeiculosComBateriaBaixa(limite: 20.0).length, equals(1));
       expect(frota.existeVeiculoCritico(limiteCritico: 5.0), isFalse);
       expect(frota.todosAptosParaOperacao(limiteMinimo: 20.0), isFalse);
     });
   });
 
   group('5. Polimorfismo e Processamento de Carga', () {
-    test('CarroEletrico e CarroCombustao devem processar consumo com regras polimórficas', () {
-      final ev = CarroEletrico(id: 'EV-1', modelo: 'Bolt', nivelBateria: 100.0, capacidadeBateriaKwh: 60.0);
-      final combustao = CarroCombustao(id: 'ICE-1', modelo: 'Onix', nivelBateria: 100.0, nivelCombustivelLitros: 40.0);
+    test(
+        'CarroEletrico e CarroCombustao devem processar consumo com regras polimórficas',
+        () {
+      final ev = CarroEletrico(
+          id: 'EV-1',
+          modelo: 'Bolt',
+          nivelBateria: 100.0,
+          capacidadeBateriaKwh: 60.0);
+      final combustao = CarroCombustao(
+          id: 'ICE-1',
+          modelo: 'Onix',
+          nivelBateria: 100.0,
+          nivelCombustivelLitros: 40.0);
 
       ev.processarCargaTrabalho(2.0);
       combustao.processarCargaTrabalho(2.0);

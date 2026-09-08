@@ -18,10 +18,10 @@ class CarroCombustao extends Veiculo {
     double? nivelCombustivelLitros,
     this.consumoMedioKmL = 11.5,
   }) : nivelCombustivelLitros =
-           (nivelCombustivelLitros ?? capacidadeTanqueLitros).clamp(
-             0.0,
-             capacidadeTanqueLitros,
-           );
+            (nivelCombustivelLitros ?? capacidadeTanqueLitros).clamp(
+          0.0,
+          capacidadeTanqueLitros,
+        );
 
   /// Processamento polimórfico de carga de trabalho para veículos a combustão.
   /// Consome combustível conforme a intensidade do percurso e gera dreno na bateria auxiliar (12V).

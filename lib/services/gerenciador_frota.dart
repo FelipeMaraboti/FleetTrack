@@ -90,12 +90,16 @@ class GerenciadorFrota {
   /// Verifica se TODOS os veículos estão aptos para operação (conectados e com bateria >= 20%) usando .every().
   bool todosAptosParaOperacao({double limiteMinimo = 20.0}) {
     if (_veiculos.isEmpty) return false;
-    return _veiculos.every((v) => v.conectado && v.nivelBateria >= limiteMinimo);
+    return _veiculos
+        .every((v) => v.conectado && v.nivelBateria >= limiteMinimo);
   }
 
   /// Transforma a lista de veículos em uma lista de strings informativas usando .map().
   List<String> obterResumoModelos() {
-    return _veiculos.map((v) => '${v.id} -> ${v.modelo} (${v.nivelBateria.toStringAsFixed(0)}%)').toList();
+    return _veiculos
+        .map((v) =>
+            '${v.id} -> ${v.modelo} (${v.nivelBateria.toStringAsFixed(0)}%)')
+        .toList();
   }
 
   /// Mapeia a frota em um Map<String, Veiculo> indexado pelo ID do veículo (demonstração de Map).

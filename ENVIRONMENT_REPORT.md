@@ -33,7 +33,7 @@ Caso o Flutter SDK não esteja configurado no `PATH` global, certifique-se de ad
 > **AVISO IMPORTANTE:** O bloco abaixo é o espaço reservado para a inserção dos dados do seu ambiente real. Execute o comando indicado acima no seu computador e substitua o conteúdo do bloco de código a seguir pela saída completa gerada no seu terminal.
 
 ```text
-[COLE AQUI A SAÍDA REAL DO COMANDO flutter doctor -v]
+[Flutter SDK não está instalado ou configurado no PATH neste ambiente. Como este é um projeto puramente Dart (CLI), a ausência do Flutter SDK não afeta a execução da aplicação.]
 ```
 
 ---
