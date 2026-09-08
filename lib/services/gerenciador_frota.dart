@@ -38,6 +38,14 @@ class GerenciadorFrota {
     }
   }
 
+  /// Busca um veículo pelo ID retornando nulo se não encontrado (Sound Null Safety).
+  Veiculo? buscarPorIdOuNull(String id) {
+    for (final v in _veiculos) {
+      if (v.id == id) return v;
+    }
+    return null;
+  }
+
   /// Retorna uma cópia defensiva da lista de veículos usando Spread Operator (...).
   List<Veiculo> obterTodos() {
     return [..._veiculos];
