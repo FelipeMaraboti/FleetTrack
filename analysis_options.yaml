@@ -1,0 +1,14 @@
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - windows/**
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    avoid_print: false
+    use_super_parameters: false
+    dangling_library_doc_comments: false
+    unnecessary_nullable_for_final_variable_declarations: false
+

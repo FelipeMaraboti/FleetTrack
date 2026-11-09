@@ -5,7 +5,7 @@ import 'package:fleet_track/models/leitura_telemetria.dart';
 import 'package:fleet_track/models/rota.dart';
 import 'package:fleet_track/services/gerenciador_frota.dart';
 import 'package:fleet_track/services/servico_telemetria.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('1. Validação de Bateria e Encapsulamento', () {

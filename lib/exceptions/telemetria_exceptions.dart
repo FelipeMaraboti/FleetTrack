@@ -50,3 +50,34 @@ class RotaInvalidaException implements Exception {
   @override
   String toString() => 'RotaInvalidaException: $mensagem';
 }
+
+// ===========================================================================
+// AP2B - Exceções da camada de rede / sincronização Offline-First
+// ===========================================================================
+
+/// Disparada quando não há conectividade (socket, timeout, DNS ou modo
+/// offline simulado). O repositório captura esta exceção e mantém o dado
+/// salvo localmente como pendente.
+class RedeIndisponivelException implements Exception {
+  final String mensagem;
+
+  RedeIndisponivelException(this.mensagem);
+
+  @override
+  String toString() => 'RedeIndisponivelException: $mensagem';
+}
+
+/// Disparada quando a API responde, porém com código HTTP fora da faixa 2xx
+/// ou com payload inválido.
+class SincronizacaoException implements Exception {
+  final String mensagem;
+  final int? statusCode;
+
+  SincronizacaoException(this.mensagem, {this.statusCode});
+
+  @override
+  String toString() {
+    final codigo = statusCode != null ? ' (HTTP $statusCode)' : '';
+    return 'SincronizacaoException: $mensagem$codigo';
+  }
+}

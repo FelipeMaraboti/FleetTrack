@@ -1,25 +1,41 @@
+import 'dart:convert';
+
 import '../exceptions/telemetria_exceptions.dart';
 
 /// Representa um snapshot de leitura de telemetria emitido pelos sensores do veículo.
+///
+/// AP2B: a leitura é persistida no SQLite (tabela `leituras`), relacionada a
+/// uma [Rota] via `rotaId` (chave estrangeira opcional) e sincronizada em
+/// lotes com a API REST.
 class LeituraTelemetria {
+  final String id;
   final String veiculoId;
+  final String? rotaId;
   final double latitude;
   final double longitude;
   final double velocidade;
   final double bateria;
   final DateTime timestamp;
   final bool conectado;
+  final bool sincronizado;
+  final bool excluido;
 
   /// Construtor gerativo com validação completa de limites físicos.
   LeituraTelemetria({
+    String? id,
     required this.veiculoId,
+    this.rotaId,
     required this.latitude,
     required this.longitude,
     required this.velocidade,
     required this.bateria,
     DateTime? timestamp,
     this.conectado = true,
-  }) : timestamp = timestamp ?? DateTime.now() {
+    this.sincronizado = false,
+    this.excluido = false,
+  })  : timestamp = timestamp ?? DateTime.now(),
+        id = id ??
+            'LEI-${(timestamp ?? DateTime.now()).microsecondsSinceEpoch}' {
     if (latitude < -90.0 || latitude > 90.0) {
       throw DadosTelemetriaInvalidosException(
         'Latitude fora dos limites válidos [-90, +90]: $latitude',
@@ -45,9 +61,10 @@ class LeituraTelemetria {
     }
   }
 
-  /// Construtor factory seguro para desserialização de dados recebidos via telemetria.
+  /// Construtor factory seguro para desserialização de dados recebidos via
+  /// telemetria, SQLite (snake_case) ou payload legado da AP1B (camelCase).
   factory LeituraTelemetria.fromMap(Map<String, dynamic> map) {
-    final rawVeiculoId = map['veiculoId'];
+    final rawVeiculoId = map['veiculo_id'] ?? map['veiculoId'];
     if (rawVeiculoId == null ||
         rawVeiculoId is! String ||
         rawVeiculoId.isEmpty) {
@@ -73,17 +90,65 @@ class LeituraTelemetria {
       parsedTimestamp = DateTime.tryParse(rawTimestamp);
     }
 
-    final bool conectado = (map['conectado'] is bool) ? map['conectado'] : true;
-
     return LeituraTelemetria(
+      id: map['id']?.toString(),
       veiculoId: rawVeiculoId,
+      rotaId: (map['rota_id'] ?? map['rotaId']) as String?,
       latitude: rawLat.toDouble(),
       longitude: rawLng.toDouble(),
       velocidade: rawVel.toDouble(),
       bateria: rawBat.toDouble(),
       timestamp: parsedTimestamp,
-      conectado: conectado,
+      conectado: _lerBool(map['conectado'], padrao: true),
+      sincronizado: _lerBool(map['sincronizado'], padrao: false),
+      excluido: _lerBool(map['excluido'], padrao: false),
     );
+  }
+
+  /// Cria uma cópia atualizando o estado de sincronização / exclusão.
+  LeituraTelemetria copyWith({bool? sincronizado, bool? excluido}) {
+    return LeituraTelemetria(
+      id: id,
+      veiculoId: veiculoId,
+      rotaId: rotaId,
+      latitude: latitude,
+      longitude: longitude,
+      velocidade: velocidade,
+      bateria: bateria,
+      timestamp: timestamp,
+      conectado: conectado,
+      sincronizado: sincronizado ?? this.sincronizado,
+      excluido: excluido ?? this.excluido,
+    );
+  }
+
+  /// Converte para Map compatível com SQLite (bool -> 0/1).
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'veiculo_id': veiculoId,
+        'rota_id': rotaId,
+        'latitude': latitude,
+        'longitude': longitude,
+        'velocidade': velocidade,
+        'bateria': bateria,
+        'timestamp': timestamp.toIso8601String(),
+        'conectado': conectado ? 1 : 0,
+        'sincronizado': sincronizado ? 1 : 0,
+        'excluido': excluido ? 1 : 0,
+      };
+
+  /// Map enviado à API (sem os marcadores internos de sincronização).
+  Map<String, dynamic> toApiMap() => toMap()
+    ..remove('sincronizado')
+    ..remove('excluido')
+    ..['conectado'] = conectado;
+
+  String toJson() => jsonEncode(toApiMap());
+
+  static bool _lerBool(Object? valor, {required bool padrao}) {
+    if (valor is bool) return valor;
+    if (valor is num) return valor == 1;
+    return padrao;
   }
 
   @override

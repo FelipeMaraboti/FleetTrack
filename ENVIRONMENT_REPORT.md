@@ -1,52 +1,49 @@
-# Environment Report - FleetTrack
+# Environment Report — FleetTrack (AP2B)
 
-Este documento descreve o ambiente de desenvolvimento, ferramentas utilizadas e o diagnóstico de integridade da máquina de desenvolvimento para o projeto **FleetTrack**.
+Este documento descreve o ambiente de desenvolvimento, dependências e diagnóstico técnico utilizados para construção e validação do aplicativo **FleetTrack** na Avaliação Processual 2B (Marco 2).
 
 ---
 
 ## 1. Informações do Ambiente
 
-* **Sistema Operacional:** Windows 10 / 11 Pro (64-bit)
-* **Dart SDK:** Dart 3.x (Integrado ao Flutter SDK / Standalone)
-* **Flutter SDK:** Canal Stable (3.x ou superior)
-* **Ambiente de Desenvolvimento (IDE):** Visual Studio Code / Android Studio
-* **Extensões Utilizadas:** Dart Code, Flutter Extension, GitLens
-* **Ferramenta de Linha de Comando (CLI):** PowerShell / Command Prompt / Terminal Integrado
-* **Dispositivos de Teste:** Emulador Android (Pixel API 34) / Terminal CLI Desktop
+* **Sistema Operacional:** Windows 10 / 11 (64-bit)
+* **Flutter SDK:** Flutter 3.x (Canal `stable`)
+* **Dart SDK:** Dart 3.x (Sound Null Safety)
+* **IDE:** Visual Studio Code / Android Studio
+* **Persistência Local:** `sqflite` (Android/iOS) + `sqflite_common_ffi` (Windows/Linux Desktop) + `shared_preferences`
+* **Comunicação de Rede:** `package:http` (REST JSON com `MockClient` para testes sem emulador)
+* **Framework de Testes:** `flutter_test` (Testes de Unidade e `testWidgets`)
 
 ---
 
-## 2. Instruções para Obtenção do Diagnóstico Real
+## 2. Comandos de Verificação e Execução
 
-Para validar se o ambiente local possui todas as dependências e ferramentas instaladas corretamente, execute o seguinte comando no terminal:
-
+### Diagnóstico do Flutter
 ```bash
 flutter doctor -v
 ```
 
-Caso o Flutter SDK não esteja configurado no `PATH` global, certifique-se de adicionar a pasta `bin` da instalação do Flutter às variáveis de ambiente do sistema.
-
----
-
-## 3. Saída do Diagnóstico do Flutter (`flutter doctor -v`)
-
-> **AVISO IMPORTANTE:** O bloco abaixo é o espaço reservado para a inserção dos dados do seu ambiente real. Execute o comando indicado acima no seu computador e substitua o conteúdo do bloco de código a seguir pela saída completa gerada no seu terminal.
-
-```text
-[Flutter SDK não está instalado ou configurado no PATH neste ambiente. Como este é um projeto puramente Dart (CLI), a ausência do Flutter SDK não afeta a execução da aplicação.]
-```
-
----
-
-## 4. Instruções de Verificação do Dart SDK
-
-Para confirmar a versão exata do compilador Dart instalado:
-
+### Análise Estática de Código
 ```bash
-dart --version
+flutter analyze
 ```
 
-Saída esperada (exemplo):
-```text
-Dart SDK version: 3.x.x (stable) (date) on "windows_x64"
+### Execução da Suíte de Testes Automatizados
+```bash
+flutter test
 ```
+
+### Execução do Aplicativo Móvel / Desktop
+```bash
+flutter pub get
+flutter run
+```
+
+---
+
+## 3. Resumo da Validação Automatizada (`flutter test`)
+
+* **`test/dominio_ap1b_test.dart`:** 9 testes de unidade validando encapsulamento, construtores `factory`/nomeados, polimorfismo (`CarroEletrico` vs. `CarroCombustao`), coleções funcionais (`where`, `map`, `fold`, `any`, `every`) e exceções de domínio (`RecursoCriticoException`, `DadosTelemetriaInvalidosException`).
+* **`test/serializacao_test.dart`:** 12 testes de unidade validando `toMap()`, `fromMap()`, `copyWith()` e `toJson()` para `Rota`, `LeituraTelemetria`, `LogSincronizacao` e `CondicaoClima`.
+* **`test/repositorio_offline_test.dart`:** 13 testes de unidade validando a estratégia **Offline-First** com `MockClient`: escrita resiliente em falha HTTP `500`, queda de socket/DNS, `timeout`, modo offline simulado, sincronização em lote (`POST`), exclusão lógica seguida de `DELETE` remoto e cache local de clima.
+* **`test/widgets_test.dart`:** 8 testes de widgets (`testWidgets`) validando renderização do Dashboard, ícones de estado de sincronização, listagens dinâmicas, validação de campos obrigatórios nos formulários de Rota e Telemetria, cadastro offline, alternância do banner de modo offline e proteção de rotas inválidas.
