@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 import 'datasources/local_datasources.dart';
+import 'datasources/memoria_datasources.dart';
 import 'datasources/preferencias_datasource.dart';
 import 'datasources/remote_datasources.dart';
 import 'datasources/sqlite_datasources.dart';
@@ -63,6 +65,16 @@ class AppDependencies {
 
   /// Configuração de produção: SQLite (sqflite) + shared_preferences + HTTP.
   static Future<AppDependencies> criarPadrao() async {
+    // Web: o sqflite não roda no navegador, então os dados ficam em memória.
+    if (kIsWeb) {
+      return AppDependencies.montar(
+        rotaLocal: MemoriaRotaDatasource(),
+        leituraLocal: MemoriaLeituraDatasource(),
+        logLocal: MemoriaLogDatasource(),
+        preferencias: await SharedPrefsDatasource.carregar(),
+        httpClient: http.Client(),
+      );
+    }
     final helper = DatabaseHelper();
     return AppDependencies.montar(
       rotaLocal: SqliteRotaDatasource(helper),
