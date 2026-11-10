@@ -6,6 +6,7 @@ import '../models/carro_combustao.dart';
 import '../models/carro_eletrico.dart';
 import '../models/condicao_clima.dart';
 import '../models/leitura_telemetria.dart';
+import '../theme/app_theme.dart';
 import '../widgets/comuns.dart';
 
 /// Tela 3 - Detalhes do veículo + última leitura (SQLite) + clima (Open-Meteo).
@@ -72,61 +73,106 @@ class _VeiculoDetalheScreenState extends State<VeiculoDetalheScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(veiculo.modelo)),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          DestaqueCard(
+            sobretitulo: '${veiculo.id} · ${veiculo is CarroEletrico ? 'Elétrico' : 'Combustão'}',
+            titulo: veiculo.modelo,
+            trailing: StatusPill(
+              texto: veiculo.conectado ? 'ONLINE' : 'OFFLINE',
+              cor: veiculo.conectado ? AppColors.verde : AppColors.cinza300,
+            ),
+            children: [
+              Row(
                 children: [
-                  Text(veiculo.id, style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 8),
-                  BateriaIndicator(nivel: veiculo.nivelBateria),
-                  const SizedBox(height: 8),
-                  Text('Status: ${veiculo.conectado ? 'ONLINE' : 'OFFLINE'}'),
-                  Text('Velocidade: ${veiculo.velocidadeAtual.toStringAsFixed(0)} km/h'),
-                  Text('Rota atual: ${veiculo.rotaAtualId ?? 'Sem rota atribuída'}'),
+                  DestaqueValor(valor: '${veiculo.nivelBateria.toStringAsFixed(0)}%', rotulo: 'Bateria'),
+                  DestaqueValor(valor: veiculo.velocidadeAtual.toStringAsFixed(0), rotulo: 'km/h agora'),
                   if (veiculo is CarroEletrico)
-                    Text('Autonomia: ${veiculo.autonomiaRestanteKm.toStringAsFixed(0)} km (${veiculo.capacidadeBateriaKwh.toStringAsFixed(0)} kWh)'),
+                    DestaqueValor(valor: veiculo.autonomiaRestanteKm.toStringAsFixed(0), rotulo: 'km de autonomia'),
                   if (veiculo is CarroCombustao)
-                    Text('Tanque: ${veiculo.nivelCombustivelLitros.toStringAsFixed(1)} / ${veiculo.capacidadeTanqueLitros.toStringAsFixed(0)} L'),
+                    DestaqueValor(valor: veiculo.nivelCombustivelLitros.toStringAsFixed(0), rotulo: 'litros no tanque'),
                 ],
               ),
-            ),
+              const SizedBox(height: 16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(99),
+                child: LinearProgressIndicator(
+                  value: (veiculo.nivelBateria / 100).clamp(0.0, 1.0),
+                  minHeight: 6,
+                  color: veiculo.nivelBateria < 20 ? AppColors.laranja : AppColors.verde,
+                  backgroundColor: AppColors.cinza800,
+                ),
+              ),
+            ],
           ),
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.gps_fixed),
-              title: const Text('Última leitura registrada'),
-              subtitle: Text(ultima == null
+          const SecaoTitulo('Informações'),
+          Bloco(children: [
+            InfoLinha(icone: Icons.alt_route, rotulo: 'Rota atual', valor: veiculo.rotaAtualId ?? 'Sem rota atribuída'),
+            if (veiculo is CarroEletrico)
+              InfoLinha(
+                  icone: Icons.bolt, rotulo: 'Capacidade da bateria', valor: '${veiculo.capacidadeBateriaKwh.toStringAsFixed(0)} kWh'),
+            if (veiculo is CarroCombustao)
+              InfoLinha(
+                icone: Icons.local_gas_station,
+                rotulo: 'Tanque',
+                valor: '${veiculo.nivelCombustivelLitros.toStringAsFixed(1)} / ${veiculo.capacidadeTanqueLitros.toStringAsFixed(0)} L',
+              ),
+            InfoLinha(
+              icone: Icons.gps_fixed,
+              rotulo: 'Última leitura registrada',
+              valor: ultima == null
                   ? 'Nenhuma leitura salva para este veículo.'
-                  : '(${ultima.latitude.toStringAsFixed(4)}, ${ultima.longitude.toStringAsFixed(4)}) • ${ultima.velocidade.toStringAsFixed(0)} km/h'),
+                  : '${ultima.latitude.toStringAsFixed(4)}, ${ultima.longitude.toStringAsFixed(4)} · ${ultima.velocidade.toStringAsFixed(0)} km/h',
               trailing: ultima == null ? null : SyncStatusIcon(sincronizado: ultima.sincronizado),
             ),
-          ),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Clima no local (Open-Meteo)', style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  if (_carregandoClima) const LinearProgressIndicator(),
-                  if (clima != null)
-                    Text('${clima.descricao} • ${clima.temperatura.toStringAsFixed(1)} °C • vento ${clima.ventoKmh.toStringAsFixed(0)} km/h'
-                        '${clima.doCache ? '\n(dados do cache local - offline)' : ''}'),
-                  if (_erroClima != null) Text(_erroClima!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-                  const SizedBox(height: 8),
-                  FilledButton.tonalIcon(
-                    onPressed: _carregandoClima ? null : _consultarClima,
-                    icon: const Icon(Icons.cloud),
-                    label: const Text('Consultar clima'),
-                  ),
-                ],
+          ]),
+          const SecaoTitulo('Clima no local'),
+          Bloco(
+            padding: const EdgeInsets.all(16),
+            children: [
+              if (clima != null) ...[
+                Row(
+                  children: [
+                    Text('${clima.temperatura.toStringAsFixed(0)}°',
+                        style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w800)),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(clima.descricao, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                          Text('Vento ${clima.ventoKmh.toStringAsFixed(0)} km/h', style: Theme.of(context).textTheme.bodySmall),
+                        ],
+                      ),
+                    ),
+                    if (clima.doCache) const StatusPill(texto: 'CACHE', cor: AppColors.laranja),
+                  ],
+                ),
+                const SizedBox(height: 16),
+              ] else
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text('Consulte a previsão do Open-Meteo para a última posição do veículo.',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                ),
+              if (_carregandoClima) ...[
+                ClipRRect(borderRadius: BorderRadius.circular(99), child: const LinearProgressIndicator(minHeight: 4)),
+                const SizedBox(height: 12),
+              ],
+              if (_erroClima != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(_erroClima!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                ),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: _carregandoClima ? null : _consultarClima,
+                  icon: const Icon(Icons.cloud_outlined),
+                  label: Text(clima == null ? 'Consultar clima' : 'Atualizar clima'),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),

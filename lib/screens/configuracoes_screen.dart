@@ -14,15 +14,17 @@ class ConfiguracoesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Configurações')),
       body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         children: [
+          const SecaoTitulo('Rede'),
           ValueListenableBuilder<bool>(
             valueListenable: deps.modoOffline,
-            builder: (context, offline, _) => SwitchListTile(
+            builder: (context, offline, _) => SwitchLinha(
               key: const Key('switch-offline'),
-              secondary: Icon(offline ? Icons.wifi_off : Icons.wifi),
-              title: const Text('Modo offline (simular queda de rede)'),
-              subtitle: const Text('Bloqueia chamadas HTTP: tudo é gravado só no SQLite.'),
-              value: offline,
+              icone: offline ? Icons.wifi_off : Icons.wifi,
+              titulo: 'Modo offline (simular queda de rede)',
+              subtitulo: 'Bloqueia chamadas HTTP: tudo é gravado só no SQLite.',
+              valor: offline,
               onChanged: (valor) async {
                 await deps.definirModoOffline(valor);
                 if (context.mounted) {
@@ -31,22 +33,12 @@ class ConfiguracoesScreen extends StatelessWidget {
               },
             ),
           ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.api),
-            title: const Text('API de telemetria (POST/DELETE)'),
-            subtitle: Text('${FleetApiDatasource.endpointPadrao}/posts'),
-          ),
-          const ListTile(
-            leading: Icon(Icons.cloud),
-            title: Text('API de clima (GET)'),
-            subtitle: Text('https://api.open-meteo.com/v1/forecast'),
-          ),
-          const ListTile(
-            leading: Icon(Icons.storage),
-            title: Text('Banco local'),
-            subtitle: Text('SQLite (sqflite) • fleet_track.db'),
-          ),
+          const SecaoTitulo('Integrações'),
+          Bloco(children: [
+            InfoLinha(icone: Icons.api, rotulo: 'API de telemetria (POST/DELETE)', valor: '${FleetApiDatasource.endpointPadrao}/posts'),
+            const InfoLinha(icone: Icons.cloud_outlined, rotulo: 'API de clima (GET)', valor: 'https://api.open-meteo.com/v1/forecast'),
+            const InfoLinha(icone: Icons.storage, rotulo: 'Banco local', valor: 'SQLite (sqflite) · fleet_track.db'),
+          ]),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_dependencies.dart';
 import '../models/rota.dart';
 import '../routes/app_routes.dart';
+import '../theme/app_theme.dart';
 import '../widgets/comuns.dart';
 
 /// Tela 4 - Listagem de rotas (CRUD com Dismissible e indicador de sync).
@@ -62,7 +63,9 @@ class _RotasScreenState extends State<RotasScreen> {
                     ? const EmptyState(mensagem: 'Nenhuma rota cadastrada.', icone: Icons.alt_route)
                     : RefreshIndicator(
                         onRefresh: _carregar,
-                        child: ListView.builder(
+                        child: ListView.separated(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+                          separatorBuilder: (_, __) => const SizedBox.shrink(),
                           itemCount: _rotas.length,
                           itemBuilder: (context, i) {
                             final rota = _rotas[i];
@@ -70,17 +73,17 @@ class _RotasScreenState extends State<RotasScreen> {
                               key: ValueKey(rota.id),
                               direction: DismissDirection.endToStart,
                               background: Container(
-                                color: Theme.of(context).colorScheme.error,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.error,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
                                 alignment: Alignment.centerRight,
-                                padding: const EdgeInsets.only(right: 20),
-                                child: const Icon(Icons.delete, color: Colors.white),
+                                padding: const EdgeInsets.only(right: 24),
+                                child: const Icon(Icons.delete_outline, color: Colors.white),
                               ),
                               onDismissed: (_) => _excluir(rota),
-                              child: ListTile(
-                                leading: CircleAvatar(child: Icon(rota.ativa ? Icons.alt_route : Icons.block)),
-                                title: Text('${rota.origem} → ${rota.destino}', maxLines: 1, overflow: TextOverflow.ellipsis),
-                                subtitle: Text('${rota.id} • ${rota.distanciaKm.toStringAsFixed(1)} km • ${rota.tempoEstimadoMinutos.toStringAsFixed(0)} min'),
-                                trailing: SyncStatusIcon(sincronizado: rota.sincronizado),
+                              child: _RotaCard(
+                                rota: rota,
                                 onTap: () async {
                                   await Navigator.pushNamed(context, AppRoutes.rotaDetalhe, arguments: rota.id);
                                   _carregar();
@@ -94,10 +97,106 @@ class _RotasScreenState extends State<RotasScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         tooltip: 'Nova rota',
         onPressed: () => _abrirFormulario(),
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('Nova rota'),
+      ),
+    );
+  }
+}
+
+/// Cartão de rota no estilo "viagem": origem (círculo) ligada ao destino (quadrado).
+class _RotaCard extends StatelessWidget {
+  final Rota rota;
+  final VoidCallback onTap;
+  final VoidCallback onLongPress;
+  const _RotaCard({required this.rota, required this.onTap, required this.onLongPress});
+
+  @override
+  Widget build(BuildContext context) {
+    final cores = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(rota.id, style: tt.labelMedium?.copyWith(color: cores.onSurfaceVariant, fontWeight: FontWeight.w700)),
+                  const SizedBox(width: 8),
+                  if (!rota.ativa) const StatusPill(texto: 'INATIVA', cor: AppColors.cinza500),
+                  const Spacer(),
+                  SyncStatusIcon(sincronizado: rota.sincronizado),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    children: [
+                      const SizedBox(height: 4),
+                      Container(width: 10, height: 10, decoration: BoxDecoration(shape: BoxShape.circle, color: cores.onSurface)),
+                      Container(width: 2, height: 22, color: cores.outline),
+                      Container(width: 10, height: 10, color: cores.onSurface),
+                    ],
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${rota.origem} → ${rota.destino}',
+                            maxLines: 1, overflow: TextOverflow.ellipsis, style: tt.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                        const SizedBox(height: 10),
+                        Text('Origem: ${rota.origem}  ·  Destino: ${rota.destino}',
+                            maxLines: 1, overflow: TextOverflow.ellipsis, style: tt.bodySmall),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  _Info(icone: Icons.straighten, texto: '${rota.distanciaKm.toStringAsFixed(1)} km'),
+                  const SizedBox(width: 8),
+                  _Info(icone: Icons.schedule, texto: '${rota.tempoEstimadoMinutos.toStringAsFixed(0)} min'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Info extends StatelessWidget {
+  final IconData icone;
+  final String texto;
+  const _Info({required this.icone, required this.texto});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(99)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icone, size: 16),
+          const SizedBox(width: 6),
+          Text(texto, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+        ],
       ),
     );
   }

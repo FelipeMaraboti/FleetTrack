@@ -4,6 +4,7 @@ import '../app_dependencies.dart';
 import '../models/leitura_telemetria.dart';
 import '../models/rota.dart';
 import '../routes/app_routes.dart';
+import '../theme/app_theme.dart';
 import '../widgets/comuns.dart';
 
 /// Tela 6 - Detalhes da rota e leituras relacionadas (relacionamento 1:N).
@@ -66,42 +67,52 @@ class _RotaDetalheScreenState extends State<RotaDetalheScreen> {
       ),
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: Card(
-              margin: const EdgeInsets.all(12),
-              child: ListTile(
-                title: Text('${rota.origem} → ${rota.destino}'),
-                subtitle: Text(
-                  '${rota.distanciaKm.toStringAsFixed(1)} km • ${rota.tempoEstimadoMinutos.toStringAsFixed(0)} min\n'
-                  'Velocidade média planejada: ${rota.calcularVelocidadeMedia().toStringAsFixed(1)} km/h\n'
-                  'Status: ${rota.ativa ? 'ATIVA' : 'INATIVA'}',
-                ),
-                isThreeLine: true,
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+            sliver: SliverToBoxAdapter(
+              child: DestaqueCard(
+                sobretitulo: '${rota.id} · ${rota.ativa ? 'Ativa' : 'Inativa'}',
+                titulo: '${rota.origem} → ${rota.destino}',
                 trailing: SyncStatusIcon(sincronizado: rota.sincronizado),
+                children: [
+                  TrajetoOD(origem: rota.origem, destino: rota.destino, cor: AppColors.branco),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      DestaqueValor(valor: '${rota.distanciaKm.toStringAsFixed(1)} km', rotulo: 'Distância'),
+                      DestaqueValor(valor: '${rota.tempoEstimadoMinutos.toStringAsFixed(0)} min', rotulo: 'Tempo estimado'),
+                      DestaqueValor(valor: rota.calcularVelocidadeMedia().toStringAsFixed(0), rotulo: 'km/h médio'),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text('Leituras nesta rota (${_leituras.length})', style: Theme.of(context).textTheme.titleMedium),
-            ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverToBoxAdapter(child: SecaoTitulo('Leituras nesta rota (${_leituras.length})')),
           ),
           if (_leituras.isEmpty)
             const SliverToBoxAdapter(child: EmptyState(mensagem: 'Nenhuma leitura vinculada.', icone: Icons.sensors_off))
           else
-            SliverList.builder(
-              itemCount: _leituras.length,
-              itemBuilder: (context, i) {
-                final l = _leituras[i];
-                return ListTile(
-                  leading: const Icon(Icons.sensors),
-                  title: Text('${l.veiculoId} • ${l.velocidade.toStringAsFixed(0)} km/h'),
-                  subtitle: Text('Bateria ${l.bateria.toStringAsFixed(0)}%'),
-                  trailing: SyncStatusIcon(sincronizado: l.sincronizado),
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.leituraDetalhe, arguments: l),
-                );
-              },
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
+              sliver: SliverList.builder(
+                itemCount: _leituras.length,
+                itemBuilder: (context, i) {
+                  final l = _leituras[i];
+                  return Card(
+                    clipBehavior: Clip.antiAlias,
+                    child: ListTile(
+                      leading: const IconTile(icone: Icons.sensors),
+                      title: Text('${l.veiculoId} · ${l.velocidade.toStringAsFixed(0)} km/h'),
+                      subtitle: Text('Bateria ${l.bateria.toStringAsFixed(0)}%'),
+                      trailing: SyncStatusIcon(sincronizado: l.sincronizado),
+                      onTap: () => Navigator.pushNamed(context, AppRoutes.leituraDetalhe, arguments: l),
+                    ),
+                  );
+                },
+              ),
             ),
         ],
       ),
@@ -111,7 +122,7 @@ class _RotaDetalheScreenState extends State<RotaDetalheScreen> {
           _carregar();
         },
         icon: const Icon(Icons.add),
-        label: const Text('Leitura'),
+        label: const Text('Nova leitura'),
       ),
     );
   }

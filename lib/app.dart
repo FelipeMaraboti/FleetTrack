@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_dependencies.dart';
 import 'routes/app_routes.dart';
+import 'theme/app_theme.dart';
 
 class FleetTrackApp extends StatelessWidget {
   final AppDependencies dependencies;
@@ -20,16 +21,8 @@ class FleetTrackApp extends StatelessWidget {
       child: MaterialApp(
         title: 'FleetTrack',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorSchemeSeed: Colors.teal,
-          brightness: Brightness.light,
-        ),
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          colorSchemeSeed: Colors.teal,
-          brightness: Brightness.dark,
-        ),
+        theme: AppTheme.claro,
+        darkTheme: AppTheme.escuro,
         initialRoute: rotaInicial,
         onGenerateRoute: AppRoutes.onGenerateRoute,
       ),

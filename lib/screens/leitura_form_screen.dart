@@ -128,83 +128,96 @@ class _LeituraFormScreenState extends State<LeituraFormScreen> {
       appBar: AppBar(title: const Text('Nova leitura')),
       body: Form(
         key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            DropdownButtonFormField<String>(
-              key: const Key('campo-veiculo'),
-              initialValue: _veiculoId,
-              decoration: const InputDecoration(labelText: 'Veículo', prefixIcon: Icon(Icons.directions_car)),
-              items: [
-                for (final v in veiculos) DropdownMenuItem(value: v.id, child: Text('${v.id} - ${v.modelo}', overflow: TextOverflow.ellipsis)),
-              ],
-              onChanged: (v) => setState(() => _veiculoId = v),
-              validator: (v) => v == null ? 'Selecione um veículo' : null,
-              isExpanded: true,
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String?>(
-              key: ValueKey('campo-rota-$rotaValida-${_rotas.length}'),
-              initialValue: rotaValida,
-              decoration: const InputDecoration(labelText: 'Rota (opcional)', prefixIcon: Icon(Icons.alt_route)),
-              items: [
-                const DropdownMenuItem<String?>(value: null, child: Text('Sem rota')),
-                for (final r in _rotas) DropdownMenuItem<String?>(value: r.id, child: Text('${r.id} - ${r.origem}', overflow: TextOverflow.ellipsis)),
-              ],
-              onChanged: (v) => setState(() => _rotaId = v),
-              isExpanded: true,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _latitude,
-                    decoration: const InputDecoration(labelText: 'Latitude'),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                    validator: validarFaixa(-90, 90),
+        // Coluna (não-preguiçosa): todos os campos existem e são validados.
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('Registrar telemetria', style: Theme.of(context).textTheme.headlineSmall),
+              const SizedBox(height: 4),
+              Text('A leitura é salva no aparelho e enviada quando houver conexão.', style: Theme.of(context).textTheme.bodySmall),
+              const SecaoTitulo('Veículo e rota'),
+              DropdownButtonFormField<String>(
+                key: const Key('campo-veiculo'),
+                initialValue: _veiculoId,
+                decoration: const InputDecoration(labelText: 'Veículo', prefixIcon: Icon(Icons.directions_car)),
+                items: [
+                  for (final v in veiculos)
+                    DropdownMenuItem(value: v.id, child: Text('${v.id} - ${v.modelo}', overflow: TextOverflow.ellipsis)),
+                ],
+                onChanged: (v) => setState(() => _veiculoId = v),
+                validator: (v) => v == null ? 'Selecione um veículo' : null,
+                isExpanded: true,
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String?>(
+                key: ValueKey('campo-rota-$rotaValida-${_rotas.length}'),
+                initialValue: rotaValida,
+                decoration: const InputDecoration(labelText: 'Rota (opcional)', prefixIcon: Icon(Icons.alt_route)),
+                items: [
+                  const DropdownMenuItem<String?>(value: null, child: Text('Sem rota')),
+                  for (final r in _rotas)
+                    DropdownMenuItem<String?>(value: r.id, child: Text('${r.id} - ${r.origem}', overflow: TextOverflow.ellipsis)),
+                ],
+                onChanged: (v) => setState(() => _rotaId = v),
+                isExpanded: true,
+              ),
+              const SecaoTitulo('Posição GPS'),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _latitude,
+                      decoration: const InputDecoration(labelText: 'Latitude'),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                      validator: validarFaixa(-90, 90),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextFormField(
-                    controller: _longitude,
-                    decoration: const InputDecoration(labelText: 'Longitude'),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                    validator: validarFaixa(-180, 180),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _longitude,
+                      decoration: const InputDecoration(labelText: 'Longitude'),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                      validator: validarFaixa(-180, 180),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              key: const Key('campo-velocidade'),
-              controller: _velocidade,
-              decoration: const InputDecoration(labelText: 'Velocidade (km/h)', prefixIcon: Icon(Icons.speed)),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              validator: validarFaixa(0, 300),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              key: const Key('campo-bateria'),
-              controller: _bateria,
-              decoration: const InputDecoration(labelText: 'Bateria (%)', prefixIcon: Icon(Icons.battery_std)),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              validator: validarFaixa(0, 100),
-            ),
-            SwitchListTile(
-              title: const Text('Sensor conectado'),
-              value: _conectado,
-              onChanged: (v) => setState(() => _conectado = v),
-            ),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              key: const Key('botao-salvar-leitura'),
-              onPressed: _salvando ? null : _salvar,
-              icon: const Icon(Icons.save),
-              label: const Text('Registrar leitura'),
-            ),
-          ],
+                ],
+              ),
+              const SecaoTitulo('Sensores'),
+              TextFormField(
+                key: const Key('campo-velocidade'),
+                controller: _velocidade,
+                decoration: const InputDecoration(labelText: 'Velocidade (km/h)', prefixIcon: Icon(Icons.speed)),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                validator: validarFaixa(0, 300),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                key: const Key('campo-bateria'),
+                controller: _bateria,
+                decoration: const InputDecoration(labelText: 'Bateria (%)', prefixIcon: Icon(Icons.battery_std)),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                validator: validarFaixa(0, 100),
+              ),
+              const SizedBox(height: 16),
+              SwitchLinha(
+                icone: Icons.sensors,
+                titulo: 'Sensor conectado',
+                valor: _conectado,
+                onChanged: (v) => setState(() => _conectado = v),
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BarraAcao(
+        child: FilledButton.icon(
+          key: const Key('botao-salvar-leitura'),
+          onPressed: _salvando ? null : _salvar,
+          icon: const Icon(Icons.check),
+          label: const Text('Registrar leitura'),
         ),
       ),
     );
