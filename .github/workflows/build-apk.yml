@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-apk:
-    name: Build FleetTrack APK (Release)
+    name: Build FleetTrack APK (Universal)
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -35,8 +35,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Release APK (arm64)
-        run: flutter build apk --release --target-platform android-arm64 --no-tree-shake-icons -v
+      - name: Build Universal APK (arm64 + armv7 + x86_64)
+        run: flutter build apk --release --no-tree-shake-icons -v
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4

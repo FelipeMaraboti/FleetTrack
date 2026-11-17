@@ -65,13 +65,20 @@ class AppDependencies {
 
   /// Configuração de produção: SQLite (sqflite) + shared_preferences + HTTP.
   static Future<AppDependencies> criarPadrao() async {
+    PreferenciasDatasource prefs;
+    try {
+      prefs = await SharedPrefsDatasource.carregar();
+    } catch (_) {
+      prefs = MemoriaPreferenciasDatasource();
+    }
+
     // Web: o sqflite não roda no navegador, então os dados ficam em memória.
     if (kIsWeb) {
       return AppDependencies.montar(
         rotaLocal: MemoriaRotaDatasource(),
         leituraLocal: MemoriaLeituraDatasource(),
         logLocal: MemoriaLogDatasource(),
-        preferencias: await SharedPrefsDatasource.carregar(),
+        preferencias: prefs,
         httpClient: http.Client(),
       );
     }
@@ -80,7 +87,7 @@ class AppDependencies {
       rotaLocal: SqliteRotaDatasource(helper),
       leituraLocal: SqliteLeituraDatasource(helper),
       logLocal: SqliteLogDatasource(helper),
-      preferencias: await SharedPrefsDatasource.carregar(),
+      preferencias: prefs,
       httpClient: http.Client(),
     );
   }
